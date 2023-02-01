@@ -6,13 +6,15 @@ contract Faucet {
     uint public numOfFunders;
     mapping(uint => address) public funders;
 
+    modifier withdrawLimit(uint256 eth_amount) {
+        require(eth_amount < eth_to_wei(10), "Withdraw ammount should be smaller than 10 ETH");
+        _;
+    }
+
     receive() external payable {}
 
-    function withdraw(uint256 ammount) external {
-        uint wei_ammount = eth_to_wei(ammount);
-        if (wei_ammount < eth_to_wei(10)){
-            payable(msg.sender).transfer(wei_ammount);
-        }
+    function withdraw(uint256 amount) external withdrawLimit(10) {
+        payable(msg.sender).transfer(amount);
     }
 
     function addFunds() external payable {
