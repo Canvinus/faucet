@@ -47,7 +47,7 @@ function App() {
     !web3Api && loadProvider();
     web3Api.contract && loadBalance();
     web3Api.web3 && getAccount();
-  }, [web3Api, web3Api.web3]);
+  }, [web3Api]);
 
   const addFunds = useCallback(async () => {
     const { contract, web3 } = web3Api
