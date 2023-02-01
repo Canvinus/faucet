@@ -15,6 +15,10 @@ function App() {
 
   const [balance, setBalance] = useState(null);
   
+  const setAccountListener = (provider) => {
+    provider.on('accountsChanged', accounts => setAccount(accounts[0]))
+  }
+
   const loadProvider = async () => {
     const provider = await detectEthereumProvider();
     const contract = await loadContract("Faucet", provider);
@@ -30,7 +34,12 @@ function App() {
       web3: new Web3(provider),
       contract
     });
+    setAccountListener(provider);
   }
+
+  useEffect(() => {
+    loadProvider();
+  }, []);
 
   useEffect(() => {
     const loadBalance = async () => {
@@ -44,7 +53,6 @@ function App() {
       setAccount(accounts[0]);
     }
 
-    !web3Api && loadProvider();
     web3Api.contract && loadBalance();
     web3Api.web3 && getAccount();
   }, [web3Api]);
@@ -74,10 +82,13 @@ function App() {
               <strong className='mr-2 mb-2'>Account: </strong>
             </span>
             {account ? 
-              account : 
+              <div className='is-uppercase'>
+               {account}
+              </div>
+               : 
               <button 
               className='button is-small' 
-              onClick={loadProvider()}
+              onClick={loadProvider}
               >
                 Connect Wallet
               </button>
